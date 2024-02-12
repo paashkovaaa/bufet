@@ -5,13 +5,25 @@ from bufet_system.models import User, Dish, Restaurant, Order, ProductCart
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(UserAdmin):
     list_display = UserAdmin.list_display + ("phone_number",)
     fieldsets = UserAdmin.fieldsets + (
         ("Additional info", {"fields": ("phone_number",)}),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
-        ("Additional info", {"fields": ("phone_number",)}),
+        (
+            (
+                "Additional info",
+                {
+                    "fields": (
+                        "first_name",
+                        "last_name",
+                        "email",
+                        "phone_number",
+                    )
+                },
+            ),
+        )
     )
 
 
