@@ -1,0 +1,42 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+
+  <div style="margin-top: 100px">
+    <h1>Menu</h1>
+
+    {% if dishes %}
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price (uah)</th>
+          <th>Weight (g)</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for dish in dishes %}
+          <tr>
+            <td>
+              <a href="{% url "bufet_system:dish-detail" pk=dish.id %}">{{ dish.name }}</a>
+            </td>
+            <td>{{ dish.price }}</td>
+            <td>{{ dish.weight }}</td>
+            <td>
+              <form method="post" action="{% url "bufet_system:add-to-cart" dish.id %}">
+                {% csrf_token %}
+                {{ form.hidden }}
+                <button type="submit" class="btn btn-outline-primary">Add to Cart</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No dishes available.</p>
+    {% endif %}
+  </div>
+{% endblock %}
+

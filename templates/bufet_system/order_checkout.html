@@ -1,0 +1,50 @@
+{% extends "layouts/base.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+  <div style="margin-top: 100px">
+    <h1>Checkout</h1>
+
+    <p><strong>First Name: </strong>{{ user_details.first_name }}</p>
+    <p><strong>Last Name: </strong>{{ user_details.last_name }}</p>
+    <p><strong>Phone Number: </strong>{{ user_details.phone_number }}</p>
+    <p><strong>Email: </strong>{{ user_details.email }}</p>
+
+    <form method="post" action="{% url "bufet_system:order-checkout" %}">
+      {% csrf_token %}
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Dish</th>
+          <th>Quantity</th>
+          <th>Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for dish in dishes %}
+          <tr>
+          <td>{{ dish.name }}</td>
+          <td>
+            {% for dish_id, quantity in quantities.items %}
+              {% if dish.id == dish_id %}
+                {{ quantity }}
+              {% endif %}
+            {% endfor %}
+          </td>
+          <td>{{ dish.price }} uah</td>
+        {% endfor %}
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+          <td colspan="3" style="color: #75201a"><strong>Total: {{ total_price }} uah</strong></td>
+        </tr>
+        </tfoot>
+      </table>
+      {{ form|crispy }}
+
+      <button type="submit" class="btn btn-outline-primary">Place Order</button>
+    </form>
+  </div>
+{% endblock %}
+

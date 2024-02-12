@@ -1,0 +1,73 @@
+<!-- Navbar -->
+<div class="container position-sticky z-index-sticky top-0">
+  <div class="row">
+    <div class="col-12">
+      <nav
+          class="navbar navbar-expand-lg  blur border-radius-xl mt-4 top-0 z-index-3 shadow position-absolute my-3 py-2 start-0 end-0 mx-4">
+        <div class="container-fluid px-0">
+          <a class="navbar-brand font-weight-bolder ms-sm-3" href="/" rel="tooltip" data-placement="bottom">
+            BUFET
+          </a>
+          <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false"
+                  aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon mt-2">
+                <span class="navbar-toggler-bar bar1"></span>
+                <span class="navbar-toggler-bar bar2"></span>
+                <span class="navbar-toggler-bar bar3"></span>
+              </span>
+          </button>
+          <div class="collapse navbar-collapse pt-3 pb-2 py-lg-0 w-100" id="navigation">
+            <ul class="navbar-nav navbar-nav-hover ms-auto">
+              <li class="nav-item mx-2">
+                <a href="{% url 'bufet_system:menu' %}" class="nav-link ps-2 d-flex cursor-pointer align-items-center"
+                   aria-expanded="false">
+                  <i class="material-icons opacity-6 me-2 text-md">article</i>
+                  Menu
+                </a>
+              </li>
+              <li class="nav-item mx-2">
+                <a href="{% url 'bufet_system:restaurant-list' %}"
+                   class="nav-link ps-2 d-flex cursor-pointer align-items-center" aria-expanded="false">
+                  <i class="material-icons opacity-6 me-2 text-md">room</i>
+                  Restaurants
+                </a>
+              </li>
+              <li class="nav-item mx-2">
+                <a href="{% url 'bufet_system:product-cart' %}"
+                   class="nav-link ps-2 d-flex cursor-pointer align-items-center" aria-expanded="false">
+                  <i class="material-icons opacity-6 me-2 text-md">shopping_cart</i>
+                  Product cart
+                </a>
+              </li>
+              <li class="nav-item mx-2">
+                <a href="{% url 'bufet_system:order-list' %}" class="nav-link ps-2 d-flex cursor-pointer align-items-center"
+                   aria-expanded="false">
+                  <i class="material-icons opacity-6 me-2 text-md">credit_card</i>
+                  Orders
+                </a>
+              </li>
+
+              {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">Logout</button>
+                  </form>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-primary">Login</button>
+                  </form>
+                </li>
+              {% endif %}
+
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>

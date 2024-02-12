@@ -1,0 +1,21 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+  <div style="margin-top: 100px">
+  <h1>Restaurants in Kharkiv:</h1>
+
+  {% if restaurants %}
+    <ul>
+      {% for restaurant in restaurants %}
+        <li>
+            {{ restaurant.address }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No restaurants available.</p>
+  {% endif %}
+
+  </div>
+{% endblock %}
+

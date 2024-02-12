@@ -1,0 +1,59 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+  <div style="margin-top: 100px">
+    <h1>Your Cart</h1>
+
+    {% if dishes %}
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for dish in dishes %}
+          <tr>
+            <td>{{ dish.name }}</td>
+            <td>{{ dish.price }} uah</td>
+            <td>
+              {% for item_id, quantity in quantities.items %}
+                {% if dish.id == item_id %}
+                  {{ quantity }}
+                {% endif %}
+              {% endfor %}
+            <td>
+              <form method="post" action="{% url "bufet_system:add-to-cart" dish_id=dish.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="btn btn-outline-secondary">Add</button>
+              </form>
+
+              <form method="post" action="{% url "bufet_system:delete-from-cart" dish_id=dish.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+          <td colspan="3" style="color: #75201a"><strong>Total: {{ total_price }} uah</strong></td>
+        </tr>
+        </tfoot>
+      </table>
+
+      <form action="{% url "bufet_system:order-checkout" %}" method="get">
+        <button type="submit" class="btn btn-outline-primary">Proceed to Checkout</button>
+      </form>
+    {% else %}
+      <p>Your cart is empty.</p>
+
+    {% endif %}
+  </div>
+{% endblock %}
+

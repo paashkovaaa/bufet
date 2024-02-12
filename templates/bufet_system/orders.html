@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+  <div style="margin-top: 100px">
+
+    <h1>Orders List</h1>
+    {% if orders %}
+
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Restaurant</th>
+          <th>Created At</th>
+          <th>Total Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+          <td>{{ order.id }}</td>
+          <td>{{ order.restaurant.address }}</td>
+          <td>{{ order.created_at }}</td>
+          <td>{{ order.total_price }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>You don't have any orders yet.</p>
+
+    {% endif %}
+  </div>
+{% endblock %}
+
