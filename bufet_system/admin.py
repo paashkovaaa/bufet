@@ -34,6 +34,7 @@ class ProductCartAdmin(admin.ModelAdmin):
     @admin.display(description="Items")
     def display_items(self, obj):
         return ", ".join([item.name for item in obj.items.all()])
+
     list_display = ("user", "created_at", "status", "display_items")
     search_fields = ["user__username"]
     list_filter = ["status"]
@@ -41,12 +42,15 @@ class ProductCartAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    @admin.display(description="Dishes")
-    def display_dishes(self, obj):
-        return ", ".join([dish.name for dish in obj.dishes.all()])
-
-    list_display = (
-        "user", "restaurant", "created_at", "total_price", "display_dishes"
-    )
-    search_fields = ["user__username", "restaurant__address"]
+    list_display = ("id",
+                    "user",
+                    "created_at",
+                    "product_cart",
+                    "restaurant",
+                    "total_price")
+    search_fields = ["id",
+                     "user__username",
+                     "restaurant__id",
+                     "product_cart__id"]
     list_filter = ["user", "restaurant"]
+    readonly_fields = ("id", "created_at", "total_price")
