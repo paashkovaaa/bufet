@@ -70,23 +70,25 @@ class ProductCartListView(LoginRequiredMixin, generic.ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        cart = self.get_user_cart()
-        return cart.items.all()
+        try:
+            cart = ProductCart.objects.get(user=self.request.user,
+                                           status=ProductCart.STATUS_DRAFT)
+            return cart.items.all()
+        except ProductCart.DoesNotExist:
+            return []
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        cart = self.get_user_cart()
-        context["total_price"] = cart.get_cart_total()
-        context["quantities"] = {item.item_id: item.quantity for item
-                                 in cart.productcartitem_set.all()}
-        return context
-
-    def get_user_cart(self):
         try:
-            return ProductCart.objects.get(user=self.request.user,
-                                           status="draft")
+            context = super().get_context_data(**kwargs)
+            cart = ProductCart.objects.get(user=self.request.user,
+                                           status=ProductCart.STATUS_DRAFT)
+            context["total_price"] = cart.get_cart_total()
+            quantities = {item.item_id: item.quantity for item
+                          in cart.productcartitem_set.all()}
+            context["quantities"] = quantities
+            return context
         except ProductCart.DoesNotExist:
-            return ProductCart()
+            return context
 
 
 class OrderCreateView(LoginRequiredMixin, generic.CreateView):
@@ -96,9 +98,12 @@ class OrderCreateView(LoginRequiredMixin, generic.CreateView):
     template_name = "bufet_system/order_checkout.html"
 
     def form_valid(self, form):
-        cart = self.get_user_cart()
+        user_product_carts = (
+            ProductCart.objects.filter(user=self.request.user,
+                                       status=ProductCart.STATUS_DRAFT))
 
-        if cart and cart.items.exists():
+        if user_product_carts.exists():
+            cart = user_product_carts.first()
             form.instance.total_price = cart.get_cart_total()
 
             try:
@@ -125,17 +130,18 @@ class OrderCreateView(LoginRequiredMixin, generic.CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user_product_carts = ProductCart.objects.filter(user=self.request.user,
+                                                        status=ProductCart.STATUS_DRAFT)
+        if user_product_carts.exists():
+            cart = user_product_carts.first()
+            context["total_price"] = cart.get_cart_total()
+            context["dishes"] = cart.get_cart_items()
+            quantities = {item.item_id: item.quantity for item
+                          in cart.productcartitem_set.all()}
+            context["quantities"] = quantities
         context["user_details"] = self.request.user
         context["restaurants"] = Restaurant.objects.all()
-        context["user_cart"] = self.get_user_cart()
         return context
-
-    def get_user_cart(self):
-        try:
-            return ProductCart.objects.get(user=self.request.user,
-                                           status="draft")
-        except ProductCart.DoesNotExist:
-            return None
 
 
 class DishDetailView(generic.DetailView):
