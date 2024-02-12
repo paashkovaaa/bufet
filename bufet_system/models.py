@@ -49,8 +49,15 @@ class ProductCart(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_DRAFT)
-    items = models.ManyToManyField(Dish, through=ProductCartItem, related_name="dishes")
+    status = models.CharField(max_length=20,
+                              choices=STATUS_CHOICES,
+                              default=STATUS_DRAFT)
+    items = models.ManyToManyField(Dish,
+                                   through=ProductCartItem,
+                                   related_name="dishes")
+
+    def __str__(self):
+        return f"product cart: {self.id}"
 
     def get_cart_items(self):
         return self.items.all()
@@ -66,51 +73,67 @@ class ProductCart(models.Model):
         self.save()
 
     def get_cart_total(self):
-        return sum([item.item.price * item.quantity for item in self.productcartitem_set.all()])
+        return sum(
+            [item.item.price *
+             item.quantity for item
+             in self.productcartitem_set.all()]
+        )
 
-    def add_product(self, dish, quantity=1):
-        existing_item = self.productcartitem_set.filter(dish=dish).first()
-
-        if existing_item:
+    def add_product(self, item, quantity=1):
+        existing_item, created = (
+            self.productcartitem_set.get_or_create(item=item))
+        if not created:
             existing_item.quantity += quantity
             existing_item.save()
-        else:
-            ProductCartItem.objects.create(cart=self, dish=dish, quantity=quantity)
 
-    def remove_product(self, dish, quantity=1):
-        existing_item = self.productcartitem_set.filter(dish=dish).first()
-
-        if existing_item:
+    def remove_product(self, item, quantity=1):
+        existing_item, created = (
+            self.productcartitem_set.get_or_create(item=item))
+        if not created:
             existing_item.quantity -= quantity
             if existing_item.quantity <= 0:
                 existing_item.delete()
             else:
                 existing_item.save()
 
-    def update_quantity(self, dish, quantity):
-        cart_item = self.productcartitem_set.filter(dish=dish).first()
-
-        if cart_item:
+    def update_quantity(self, item, quantity):
+        cart_item, created = self.productcartitem_set.get_or_create(item=item)
+        if not created:
             cart_item.quantity = quantity
             cart_item.save()
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.SET_NULL, null=True, blank=True, related_name="orders")
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE,
+                             related_name="order")
+    restaurant = models.ForeignKey(Restaurant,
+                                   on_delete=models.SET_NULL,
+                                   null=True,
+                                   blank=True,
+                                   related_name="order")
     created_at = models.DateTimeField(auto_now_add=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    product_cart = models.OneToOneField(ProductCart, on_delete=models.CASCADE, null=True, blank=True,
+    product_cart = models.OneToOneField(ProductCart,
+                                        on_delete=models.CASCADE,
+                                        null=True,
+                                        blank=True,
                                         related_name="order")
 
     class Meta:
         ordering = ("created_at",)
 
     def __str__(self):
-        return f"Order #{self.id} - User: {self.user.username} - Total Price: {self.total_price}"
+        return (f"Id: {self.id}, {self.product_cart}, "
+                f"user: {self.user.username}, "
+                f"total price: {self.total_price}")
 
     def get_cart_items(self):
         return self.product_cart.items.all()
 
     def get_cart_total(self):
-        return sum([item.item.price * item.quantity for item in self.product_cart.productcartitem_set.all()])
+        return sum(
+            [item.item.price *
+             item.quantity for item
+             in self.product_cart.productcartitem_set.all()]
+        )
