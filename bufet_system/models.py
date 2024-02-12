@@ -46,7 +46,6 @@ class ProductCart(models.Model):
         (STATUS_DRAFT, "Draft"),
         (STATUS_COMPLETED, "Completed"),
     ]
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20,
