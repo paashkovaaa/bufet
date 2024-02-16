@@ -1,9 +1,14 @@
-# BUFET Website
+# BUFET Website 🍕
 
 ## Overview
 Bufet System is a web application built using Django, providing a platform for users to browse a menu, add dishes to their cart, and place orders from various restaurants. The system supports user authentication, allowing users to track their orders and manage their cart.
 
-## Installation and Deployment
+## [Click here to go to the BUFET](https://bufet-website.onrender.com/)
+#### To log in into BUFET Website you can use:
+#### Username: test_user
+#### Password: Test123!
+
+## Installation
 1. **Clone the repository:**
 
     ```bash
