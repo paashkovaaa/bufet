@@ -10,6 +10,7 @@ django-crispy-forms==2.1
 fabio==2023.10.0
 flake8==7.0.0
 fonttools==4.48.1
+gunicorn==21.2.0
 h5py==3.10.0
 hdf5plugin==4.3.0
 kiwisolver==1.4.5
