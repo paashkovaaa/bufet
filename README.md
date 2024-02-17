@@ -13,7 +13,7 @@ Bufet System is a web application built using Django, providing a platform for u
 
     ```bash
     git clone https://github.com/paashkovaaa/bufet.git
-    cd bufet-system
+    cd bufet
     ```
 
 2. **Create a virtual environment (optional but recommended):**
